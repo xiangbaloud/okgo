@@ -1,3 +1,3 @@
-t = input("hello:")
-    for x in t;
-print(x)
+t = input("input a word:")
+for x in t:
+   print(x)
