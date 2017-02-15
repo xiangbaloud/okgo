@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#############################
+#     export parameters     #
+#############################
+
+export vmname=$(hostname)
+export devname=$2
+export localdevs=(`ls /dev/sd* | grep -v 'sda' | sed -e 's,\/dev\/,,'`)
+
+#####################################################
+sshpass()
+{
+        if [[ -f /usr/local/bin/sshpass ]]; then
+                :
+        else
+                git clone https://github.com/kevinburke/sshpass.git /tmp/sshpass -q
+                cd /tmp/sshpass
+                ./configure > /dev/null && make > /dev/nul && make install > /dev/null
+        fi
+}
+
+dropdev()
+{
+        if [[ ! ${localdevs[*]} =~ $devname ]];then
+                echo "WRONG DEVICE" && exit 1
+        else
+                echo "dropdisk $2"
+                #ssh 10.144.7.1 virsh detach-disk $@
+        fi
+}
+
+insertdev()
+{
+        if [[ ! ${localdevs[*]} =~ $devname ]];then
+                echo "WRONG DEVICE" && exit 1
+        else
+                echo "insertdisk $2 $3"
+                #ssh 10.144.7.1 virsh attach-disk $@
+                if [[ $? == '*success*' ]];then
+                        :
+                fi
+        fi
+}
+
+msg()
+{
+	echo "DESCRIPTION"
+	echo "  Detach disk device"
+	echo "USEAGE"
+	echo " ./$0 Command DeviceName"
+	echo " ./$0 dropdev <sdb,sdc...etc>"
+	echo " ./$0 insertdev <sdb,sdc...etc>"
+}
+
+[[ $# == 0 ]] && msg && exit 1
+
+if [[ $1 == "dropdev" ]] ;then
+        dropdev=1; dropdev $vmname $devname --live
+elif [[ $1 == "insertdev" ]];then
+        insertdev=1; insertdev $vmname $sourcedev $devname --live
+else
+	echo "can not use this command" && exit
+fi
