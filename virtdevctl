@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #############################
-#     export parameters     #
+#        parameters         #
 #############################
 
 export vmname=$(hostname)
@@ -38,7 +38,8 @@ insertdev()
                 echo "insertdisk $2 $3"
                 #ssh 10.144.7.1 virsh attach-disk $@
                 if [[ $? == '*success*' ]];then
-                        :
+                        newvirtdev=`ll /dev/disk/by-path/ | grep $devname | awk '{print $9}'` && sed -i "15i \$driveMap[] = \"$newvirtdev"\"\; /etc/udev/udevlfsm-scandev.php
+			udevadm control --reload && udevadm trigger
                 fi
         fi
 }
