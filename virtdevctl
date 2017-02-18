@@ -7,6 +7,7 @@
 export vmname=$(hostname)
 export devname=$2
 export localdevs=(`ls /dev/sd* | grep -v 'sda' | sed -e 's,\/dev\/,,'`)
+export sourcedev=`ssh 10.144.7.1 virsh vol-list storage_ssd --details`
 
 #####################################################
 sshpass()
@@ -32,14 +33,16 @@ dropdev()
 
 insertdev()
 {
-        if [[ ! ${localdevs[*]} =~ $devname ]];then
+	if [[ ! ${localdevs[*]} =~ $devname ]];then
                 echo "WRONG DEVICE" && exit 1
         else
                 echo "insertdisk $2 $3"
                 #ssh 10.144.7.1 virsh attach-disk $@
-                if [[ $? == '*success*' ]];then
+                if [[ $? == 1 ]];then
                         newvirtdev=`ll /dev/disk/by-path/ | grep $devname | awk '{print $9}'` && sed -i "15i \$driveMap[] = \"$newvirtdev"\"\; /etc/udev/udevlfsm-scandev.php
 			udevadm control --reload && udevadm trigger
+		else
+			echo "do nothing"
                 fi
         fi
 }
