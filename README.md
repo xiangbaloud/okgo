@@ -1,2 +1,2 @@
 # okgo
-This is a bash folder.
+This is bash folder.
