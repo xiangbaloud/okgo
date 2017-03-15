@@ -8,7 +8,7 @@ division=0
 usage()
 {
 	echo "Usage: This is simple calculator"
-	echo "Select one operator from 1 to 4 and give numbers to operate, like this: 3 9990 5"
+	echo "Give one operator from 1 to 4 and give numbers to operate, $0 3 9990 5"
 	echo "  1) addition"
 	echo "  2) subtraction"
 	echo "  3) multiplication"
