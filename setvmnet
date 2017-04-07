@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#for centos6
+netconnect=`hostname -I`
+
+# change clone's vm eth1 to eth0
+if [[ -z $netconnect ]]; then
+    sed -i '8s/^/# /g' /etc/udev/rules.d/70-persistent-net.rules 
+    sed -i 's/eth1/eth0/g' /etc/udev/rules.d/70-persistent-net.rules
+    udevadm control --reload
+    udevadm trigger
+    /usr/sbin/ifup eth0
+else
+    logger "eth0 is up"
+fi
