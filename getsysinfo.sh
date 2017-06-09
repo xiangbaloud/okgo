@@ -16,9 +16,8 @@ os=$(uname -o)
 echo -e '\E[33m'"Operating System Type :" $msgcolor $os
 
 # Check OS Release Version and Name
-cat /etc/*release | grep 'NAME\|VERSION' | grep -v 'VERSION_ID' | grep -v 'PRETTY_NAME' > /tmp/osrelease
-echo -n -e '\E[33m'"OS Name :" $msgcolor  && cat /tmp/osrelease | grep -v "VERSION" | cut -f2 -d\"
-echo -n -e '\E[33m'"OS Version :" $msgcolor && cat /tmp/osrelease | grep -v "NAME" | cut -f2 -d\"
+echo -n -e '\E[33m'"OS Name :" $msgcolor  && cat /etc/*release | grep 'PRETTY_NAME' | awk -F'"' '{print $2}'
+echo -n -e '\E[33m'"OS Version :" $msgcolor && cat /etc/*release | cat /etc/*release | grep 'VERSION' | awk -F'"' '{print $2}' | head -n 1
 
 # Check Architecture
 architecture=$(uname -m)
@@ -36,7 +35,7 @@ internalip=$(hostname -I)
 echo -e '\E[33m'"Internal IP :" $msgcolor $internalip
 
 # Check External IP
-externalip=$(curl -s ipecho.net/plain;echo)
+externalip=$(curl -s ipecho.net/plain; echo)
 echo -e '\E[33m'"External IP : $msgcolor "$externalip
 
 # Check DNS
@@ -44,8 +43,7 @@ nameservers=$(cat /etc/resolv.conf | grep 'nameserver' | awk '{print $2}')
 echo -e '\E[33m'"Name Servers :" $msgcolor $nameservers 
 
 # Check Logged In Users
-who>/tmp/who
-echo -e '\E[33m'"Logged In users :" $msgcolor && cat /tmp/who 
+echo -e '\E[33m'"Logged In users :" $msgcolor && who
 
 # Check RAM and SWAP Usages
 free -h | grep -v + > /tmp/ramcache
@@ -71,4 +69,4 @@ echo -e '\E[33m'"System Uptime Days/(HH:MM) :" $msgcolor $sysuptime
 unset msgcolor os architecture kernelrelease internalip externalip nameserver loadaverage
 
 # Remove Temporary Files
-rm -rf /tmp/osrelease /tmp/who /tmp/ramcache /tmp/diskusage
+rm -rf /tmp/ramcache /tmp/diskusage
