@@ -1,2 +1,2 @@
 # okgo
-This is bash folder.
+This is shell script.
